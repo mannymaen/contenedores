@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en" ng-app="praApp">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Contenedores</title>
+  </head>
+  <body>
+    <div class="container" ng-controller="generalListController">
+      <div class="jumbotron">
+        <h1>Contenedores</h1>
+        <h4>Instrucciones</h4>
+        <ul>
+          <li>Paso 1: Selecciona el número de contenedores a llenar.</li>
+          <li>Paso 2: Abre el contenedor que se quiere llenar.</li>
+          <li>Paso 3: Da click en el botón "Agregar en el contenedor" de el elemnto deseado de la lista, los elementos aparecerán en el contenedor abierto.</li>
+          <li>Paso4: Si requieres eliminar algún elemento, solo abre un contenedor y da click en el botón "Eliminar" del elemento deseado.</li>
+          <li>Paso5: Cuando se haya concluído la actividad, da click en "Enviar" y aparecerá un modal con el objeto que se enviará.</li>
+        </ul>
+      </div>
+
+
+      
+      <div class="row">
+        
+        <div class="col-md-6">
+          <h2>Listado General</h2>
+          <table class="table table-hover table-sm ">
+            <thead>
+              <tr >
+                <th scope="col">id</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="elem in listadoGeneral">
+                <th scope="row">{{elem.id}}</th>
+                <td>{{elem.nombre}}</td>
+                <td>{{elem.descripcion}}</td>
+                <td><button class="btn btn-info btn-sm" ng-click="addContainer(elem)">Agregar al contenedor</button></td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+        <div class="col-md-6">
+          <h2>Contenedores</h2>
+          <div class="form-group">
+            <label for="selectCombo">¿Cuántos contenedores quieres?</label>
+            <select class="form-control" id="selectCombo" ng-options="option.nombre for option in opcionesCombo track by option.id" ng-model="selected" ng-change="change(selected)">
+            </select>
+          </div>
+
+          <h5 ng-show="!contenedores.length == []">Abre el contenedor para agregar elementos de la lista</h5>
+
+          <div class="accordion" id="accordionContainers">
+            <div class="card" ng-repeat="contenedor in contenedores">
+              <div class="card-header" id="heading{{contenedor.contenedor}}">
+                <h2 class="mb-0">
+                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{{contenedor.contenedor}}" aria-expanded="true" aria-controls="collapse{{contenedor.contenedor}}" ng-click="selectContainer(contenedor.contenedor)">
+                    Contenedor {{ contenedor.contenedor}}
+                  </button>
+                </h2>
+              </div>
+
+              <div id="collapse{{contenedor.contenedor}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionContainers">
+                <div class="card-body">
+                  <h5 class="card-subtitle">Elementos del contenedor</h5>
+                  <table class="table table-hover table-sm ">
+                    <thead>
+                      <tr >
+                        <th scope="col">id</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col">Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="elementoContenedor in contenedor.listaElementos track by $index">
+                        <th scope="row">{{elementoContenedor.id}}</th>
+                        <td>{{elementoContenedor.nombre}}</td>
+                        <td>{{elementoContenedor.descripcion}}</td>
+                        <td><button class="btn btn-danger btn-sm" ng-click="deleteElement(elementoContenedor, contenedor)">Eliminar</button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <button class="btn btn-lg btn-success" data-toggle="modal" data-target="#enviarModal">Enviar</button>
+        </div>
+        
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="enviarModal" tabindex="-1" role="dialog" aria-labelledby="enviarModal" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="enviarModal">Objeto Enviar</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="objetoTextArea">Object</label>
+                <textarea class="form-control" id="objetoTextArea" rows="50" ng-model="contenedores | json">
+                </textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="footer mt-auto py-3">
+      <div class="container">
+        <span class="text-muted">Contenedores 2019</span>
+      </div>
+      
+    </footer>
+    
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="pra.js"></script>
+  </body>
+</html>
